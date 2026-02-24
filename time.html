@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>春节倒计时</title>
+    <title>2026年节假日倒计时</title>
     <style>
         * {
             margin: 0;
@@ -13,150 +13,302 @@
         }
         body {
             background-color: #f8f9fa;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            padding: 20px 10px;
             min-height: 100vh;
-            padding: 20px;
         }
         .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
-        .title {
+        .main-title {
             color: #d43c33;
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
         }
-        .subtitle {
+        .festival-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .festival-card.spring {
+            border: 2px solid #d43c33;
+            margin-bottom: 20px;
+        }
+        .festival-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .festival-name span {
+            margin-left: 8px;
+        }
+        .target-date {
+            font-size: 12px;
             color: #666;
-            font-size: 16px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+            font-style: italic;
         }
         .countdown {
             display: flex;
-            justify-content: space-around;
-            margin: 30px 0;
+            justify-content: flex-start;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         .time-item {
             text-align: center;
         }
         .time-number {
-            font-size: 40px;
+            font-size: 24px;
             font-weight: bold;
             color: #333;
             background-color: #f0f0f0;
-            width: 80px;
-            height: 80px;
-            line-height: 80px;
-            border-radius: 10px;
-            margin: 0 auto 10px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 8px;
+            margin: 0 auto 5px;
         }
         .time-text {
-            font-size: 14px;
+            font-size: 12px;
             color: #666;
         }
-        .festival-tip {
-            font-size: 24px;
+        .blessing {
+            font-size: 16px;
             color: #d43c33;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 10px;
             display: none;
+        }
+        @media (max-width: 375px) {
+            .time-number {
+                width: 45px;
+                height: 45px;
+                line-height: 45px;
+                font-size: 20px;
+            }
+            .countdown {
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">🎊 春节倒计时 🎊</h1>
-        <p class="subtitle" id="target-date">目标时间：2025年01月29日 00:00:00</p>
-        <div class="countdown">
-            <div class="time-item">
-                <div class="time-number" id="days">00</div>
-                <div class="time-text">天</div>
+        <h1 class="main-title">🎊 2026年节假日倒计时 🎊</h1>
+        
+        <!-- 春节固定置顶 -->
+        <div class="festival-card spring" id="festival-spring">
+            <div class="festival-name">🧧 <span>春节</span></div>
+            <div class="target-date">放假首日：2027年02月06日 00:00:00</div>
+            <div class="countdown">
+                <div class="time-item"><div class="time-number days">00</div><div class="time-text">天</div></div>
+                <div class="time-item"><div class="time-number hours">00</div><div class="time-text">时</div></div>
+                <div class="time-item"><div class="time-number minutes">00</div><div class="time-text">分</div></div>
+                <div class="time-item"><div class="time-number seconds">00</div><div class="time-text">秒</div></div>
             </div>
-            <div class="time-item">
-                <div class="time-number" id="hours">00</div>
-                <div class="time-text">时</div>
-            </div>
-            <div class="time-item">
-                <div class="time-number" id="minutes">00</div>
-                <div class="time-text">分</div>
-            </div>
-            <div class="time-item">
-                <div class="time-number" id="seconds">00</div>
-                <div class="time-text">秒</div>
-            </div>
+            <div class="blessing">🎉 新年快乐！恭喜发财！🎉</div>
         </div>
-        <div class="festival-tip" id="blessing">🎉 新年快乐！恭喜发财！🎉</div>
+
+        <!-- 其他节日容器 -->
+        <div id="festival-container"></div>
     </div>
 
     <script>
-        // 预设未来几年春节的公历日期（可根据需要扩展）
-        const springFestivalDates = {
-            2025: new Date('2025-01-29T00:00:00'),
-            2026: new Date('2026-02-17T00:00:00'),
-            2027: new Date('2027-02-06T00:00:00'),
-            2028: new Date('2028-01-26T00:00:00'),
-            2029: new Date('2029-02-13T00:00:00'),
-            2030: new Date('2030-02-03T00:00:00')
-        };
-
-        // 获取下一个春节的日期
-        function getNextSpringFestival() {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            
-            // 先检查当年春节
-            if (springFestivalDates[currentYear]) {
-                const currentSF = springFestivalDates[currentYear];
-                if (now < currentSF) {
-                    return currentSF;
+        // 节日配置（所有日期已按要求修正）
+        const festivals = {
+            spring: {
+                name: "春节",
+                icon: "🧧",
+                blessing: "🎉 新年快乐！恭喜发财！🎉",
+                holidayDates: {
+                    2025: '2025-01-25',
+                    2026: '2026-02-14',
+                    2027: '2027-02-06'
+                }
+            },
+            newyear: {
+                name: "元旦",
+                icon: "🎆",
+                blessing: "🎊 元旦快乐！万事顺遂！🎊",
+                holidayDates: {
+                    2025: '2025-01-01',
+                    2026: '2026-01-01',
+                    2027: '2027-01-01'
+                }
+            },
+            qingming: {
+                name: "清明节",
+                icon: "🌿",
+                blessing: "🌱 清明安康！缅怀故人！🌱",
+                holidayDates: {
+                    2025: '2025-04-04',
+                    2026: '2026-04-04',
+                    2027: '2027-04-03'
+                }
+            },
+            labour: {
+                name: "五一劳动节",
+                icon: "🛠️",
+                blessing: "💪 劳动最光荣！节日快乐！💪",
+                holidayDates: {
+                    2025: '2025-05-01',
+                    2026: '2026-05-01',
+                    2027: '2027-05-01'
+                }
+            },
+            dragon: {
+                name: "端午节",
+                icon: "🐲",
+                blessing: "🫔 端午安康！平安喜乐！🫔",
+                holidayDates: {
+                    2025: '2025-06-02',
+                    2026: '2026-06-19', // 端午2026年6月19日
+                    2027: '2027-06-08'
+                }
+            },
+            midautumn: {
+                name: "中秋节",
+                icon: "🌕",
+                blessing: "🥮 中秋快乐！阖家团圆！🥮",
+                holidayDates: {
+                    2025: '2025-09-25',
+                    2026: '2026-09-25',
+                    2027: '2027-09-25'
+                }
+            },
+            national: {
+                name: "国庆节",
+                icon: "🇨🇳",
+                blessing: "🇨🇳 国庆快乐！国泰民安！🇨🇳",
+                holidayDates: {
+                    2025: '2025-10-01',
+                    2026: '2026-10-01',
+                    2027: '2027-10-01'
                 }
             }
+        };
+
+        // 获取节日下一个放假日期
+        function getNextHolidayDate(festivalKey) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            let targetDate = null;
+
+            const festival = festivals[festivalKey];
+            if (festival && festival.holidayDates[currentYear]) {
+                targetDate = new Date(`${festival.holidayDates[currentYear]}T00:00:00`);
+                // 若今年已过，取明年
+                if (now > targetDate) {
+                    const nextYear = currentYear + 1;
+                    targetDate = festival.holidayDates[nextYear] 
+                        ? new Date(`${festival.holidayDates[nextYear]}T00:00:00`)
+                        : new Date(`${Object.values(festival.holidayDates).at(-1)}T00:00:00`);
+                }
+            }
+            return targetDate;
+        }
+
+        // 生成节日卡片
+        function createFestivalCard(festivalKey) {
+            const festival = festivals[festivalKey];
+            const nextDate = getNextHolidayDate(festivalKey);
+            if (!nextDate) return '';
+
+            const dateText = `${nextDate.getFullYear()}年${(nextDate.getMonth()+1).toString().padStart(2, '0')}月${nextDate.getDate().toString().padStart(2, '0')}日 00:00:00`;
             
-            // 当年春节已过，返回下一年
-            return springFestivalDates[currentYear + 1] || springFestivalDates[2030];
+            return `
+                <div class="festival-card" id="festival-${festivalKey}">
+                    <div class="festival-name">${festival.icon} <span>${festival.name}</span></div>
+                    <div class="target-date">放假首日：${dateText}</div>
+                    <div class="countdown">
+                        <div class="time-item"><div class="time-number days">00</div><div class="time-text">天</div></div>
+                        <div class="time-item"><div class="time-number hours">00</div><div class="time-text">时</div></div>
+                        <div class="time-item"><div class="time-number minutes">00</div><div class="time-text">分</div></div>
+                        <div class="time-item"><div class="time-number seconds">00</div><div class="time-text">秒</div></div>
+                    </div>
+                    <div class="blessing">${festival.blessing}</div>
+                </div>
+            `;
+        }
+
+        // 排序：除春节外按日期从近到远
+        function sortFestivals() {
+            const otherFestivals = Object.keys(festivals).filter(key => key !== 'spring');
+            return otherFestivals.sort((a, b) => {
+                const dateA = getNextHolidayDate(a);
+                const dateB = getNextHolidayDate(b);
+                return dateA - dateB;
+            });
+        }
+
+        // 渲染节日卡片
+        function renderFestivals() {
+            const container = document.getElementById('festival-container');
+            if (!container) return;
+            
+            const sortedFestivals = sortFestivals();
+            container.innerHTML = '';
+            
+            sortedFestivals.forEach(key => {
+                container.innerHTML += createFestivalCard(key);
+            });
         }
 
         // 更新倒计时
-        function updateCountdown() {
-            const nextSF = getNextSpringFestival();
+        function updateFestivalCountdown(festivalKey) {
+            const festivalCard = document.getElementById(`festival-${festivalKey}`);
+            if (!festivalCard) return;
+            
+            const nextHolidayDate = getNextHolidayDate(festivalKey);
+            if (!nextHolidayDate) return;
+            
             const now = new Date();
-            const diff = nextSF - now;
+            const diff = nextHolidayDate - now;
 
-            // 更新目标时间显示
-            document.getElementById('target-date').textContent = 
-                `目标时间：${nextSF.getFullYear()}年${(nextSF.getMonth()+1).toString().padStart(2, '0')}月${nextSF.getDate().toString().padStart(2, '0')}日 00:00:00`;
+            // 更新日期显示
+            const dateText = `${nextHolidayDate.getFullYear()}年${(nextHolidayDate.getMonth()+1).toString().padStart(2, '0')}月${nextHolidayDate.getDate().toString().padStart(2, '0')}日 00:00:00`;
+            festivalCard.querySelector('.target-date').textContent = `放假首日：${dateText}`;
 
-            // 如果已到春节，显示祝福
+            // 已到节日显示祝福
             if (diff <= 0) {
-                document.querySelector('.countdown').style.display = 'none';
-                document.getElementById('blessing').style.display = 'block';
+                festivalCard.querySelector('.countdown').style.display = 'none';
+                festivalCard.querySelector('.blessing').style.display = 'block';
                 return;
             }
 
-            // 计算天、时、分、秒
+            // 计算天时分秒
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            // 更新页面显示
-            document.getElementById('days').textContent = days.toString().padStart(2, '0');
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            // 更新数值
+            festivalCard.querySelector('.time-number.days').textContent = days.toString().padStart(2, '0');
+            festivalCard.querySelector('.time-number.hours').textContent = hours.toString().padStart(2, '0');
+            festivalCard.querySelector('.time-number.minutes').textContent = minutes.toString().padStart(2, '0');
+            festivalCard.querySelector('.time-number.seconds').textContent = seconds.toString().padStart(2, '0');
         }
 
-        // 初始化并每秒更新一次
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
+        // 初始化并每秒更新
+        function updateAllFestivals() {
+            renderFestivals();
+            Object.keys(festivals).forEach(key => {
+                updateFestivalCountdown(key);
+            });
+        }
+
+        // 页面加载完成后执行
+        window.onload = function() {
+            updateAllFestivals();
+            setInterval(updateAllFestivals, 1000);
+        };
     </script>
 </body>
 </html>
