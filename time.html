@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>春节倒计时</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .title {
+            color: #d43c33;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .countdown {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        .time-item {
+            text-align: center;
+        }
+        .time-number {
+            font-size: 40px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f0f0f0;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 10px;
+            margin: 0 auto 10px;
+        }
+        .time-text {
+            font-size: 14px;
+            color: #666;
+        }
+        .festival-tip {
+            font-size: 24px;
+            color: #d43c33;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🎊 春节倒计时 🎊</h1>
+        <p class="subtitle" id="target-date">目标时间：2025年01月29日 00:00:00</p>
+        <div class="countdown">
+            <div class="time-item">
+                <div class="time-number" id="days">00</div>
+                <div class="time-text">天</div>
+            </div>
+            <div class="time-item">
+                <div class="time-number" id="hours">00</div>
+                <div class="time-text">时</div>
+            </div>
+            <div class="time-item">
+                <div class="time-number" id="minutes">00</div>
+                <div class="time-text">分</div>
+            </div>
+            <div class="time-item">
+                <div class="time-number" id="seconds">00</div>
+                <div class="time-text">秒</div>
+            </div>
+        </div>
+        <div class="festival-tip" id="blessing">🎉 新年快乐！恭喜发财！🎉</div>
+    </div>
+
+    <script>
+        // 预设未来几年春节的公历日期（可根据需要扩展）
+        const springFestivalDates = {
+            2025: new Date('2025-01-29T00:00:00'),
+            2026: new Date('2026-02-17T00:00:00'),
+            2027: new Date('2027-02-06T00:00:00'),
+            2028: new Date('2028-01-26T00:00:00'),
+            2029: new Date('2029-02-13T00:00:00'),
+            2030: new Date('2030-02-03T00:00:00')
+        };
+
+        // 获取下一个春节的日期
+        function getNextSpringFestival() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            
+            // 先检查当年春节
+            if (springFestivalDates[currentYear]) {
+                const currentSF = springFestivalDates[currentYear];
+                if (now < currentSF) {
+                    return currentSF;
+                }
+            }
+            
+            // 当年春节已过，返回下一年
+            return springFestivalDates[currentYear + 1] || springFestivalDates[2030];
+        }
+
+        // 更新倒计时
+        function updateCountdown() {
+            const nextSF = getNextSpringFestival();
+            const now = new Date();
+            const diff = nextSF - now;
+
+            // 更新目标时间显示
+            document.getElementById('target-date').textContent = 
+                `目标时间：${nextSF.getFullYear()}年${(nextSF.getMonth()+1).toString().padStart(2, '0')}月${nextSF.getDate().toString().padStart(2, '0')}日 00:00:00`;
+
+            // 如果已到春节，显示祝福
+            if (diff <= 0) {
+                document.querySelector('.countdown').style.display = 'none';
+                document.getElementById('blessing').style.display = 'block';
+                return;
+            }
+
+            // 计算天、时、分、秒
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // 更新页面显示
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // 初始化并每秒更新一次
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
